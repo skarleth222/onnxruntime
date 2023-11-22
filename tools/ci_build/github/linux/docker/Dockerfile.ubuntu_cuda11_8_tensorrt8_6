@@ -41,6 +41,12 @@ RUN v="8.6.1.6-1+cuda11.8" &&\
 # Compile trtexec
 RUN cd /usr/src/tensorrt/samples/trtexec && make
 
+# Check GPU status
+RUN nvidia-smi -i 0 -q -d CLOCK
+RUN nvidia-smi -i 0 -pm 1
+RUN nvidia-smi -i 0 -q -d CLOCK | grep -A 4 "Max Clocks" | grep "Graphics" | awk '{print $3}'
+RUN nvidia-smi --query-gpu=gpu_name,gpu_bus_id,vbios_version,clocks.current.sm,clocks.mem, --format=csv
+
 # Install Valgrind
 RUN apt-get install -y valgrind
 
@@ -66,7 +72,7 @@ ARG ONNXRUNTIME_BRANCH=main
 ARG ONNXRUNTIME_COMMIT_ID
 
 # The supported CUDA architecture
-ARG CMAKE_CUDA_ARCHITECTURES=37;50;52;60;61;70;75;80
+ARG CMAKE_CUDA_ARCHITECTURES=75
 
 WORKDIR ${ONNXRUNTIME_LOCAL_CODE_DIR}
 
