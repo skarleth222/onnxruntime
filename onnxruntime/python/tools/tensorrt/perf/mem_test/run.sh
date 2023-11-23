@@ -14,6 +14,12 @@ s) ORT_SOURCE=${OPTARG};;
 esac
 done
 
+# Check GPU status
+nvidia-smi -i 0 -q -d CLOCK
+nvidia-smi -i 0 -pm 1
+nvidia-smi -i 0 -q -d CLOCK | grep -A 4 "Max Clocks" | grep "Graphics" | awk '{print $3}'
+nvidia-smi --query-gpu=gpu_name,gpu_bus_id,vbios_version,clocks.current.sm,clocks.mem, --format=csv
+
 ONNX_MODEL_TAR_URL="https://github.com/onnx/models/raw/main/vision/classification/squeezenet/model/squeezenet1.0-7.tar.gz"
 MODEL_TAR_NAME="squeezenet1.0-7.tar.gz"
 ONNX_MODEL="squeezenet.onnx"
