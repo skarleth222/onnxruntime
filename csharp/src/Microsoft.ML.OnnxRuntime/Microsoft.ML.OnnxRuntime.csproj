@@ -175,7 +175,7 @@
   </PropertyGroup>
 
   <!-- CoreML may be valid for one of these targets as they support macOS. we do a runtime check that the OS is
-       macOS before attempting to enable CoreML. This includes net6.0 and net6.0
+       macOS before attempting to enable CoreML. This includes netcoreapp3.1 and net6.0
        NOTE: $(TargetFrameworkIdentitier) may not be set yet, so we need to call GetTargetFrameworkIdentifier
   -->
   <PropertyGroup Condition="$([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)'))=='.NETCoreApp' AND
