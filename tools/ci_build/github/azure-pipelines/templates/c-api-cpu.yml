@@ -422,6 +422,7 @@ stages:
       inputs:
         targetType: 'inline'
         script: |
+          dotnet workload restore
           dotnet workload install android ios
         workingDirectory: '$(Build.SourcesDirectory)\csharp'
 
