@@ -39,7 +39,7 @@
   <PropertyGroup Condition="('$(OrtPackageId)' == 'Microsoft.ML.OnnxRuntime' OR
                              '$(OrtPackageId)' == 'Microsoft.ML.OnnxRuntime.Azure') AND
                             '$(IncludeMobileTargets)' == 'true'">
-    <MobileTargets>$(MobileTargets);net7.0-android;net6.0-ios</MobileTargets>
+    <MobileTargets>$(MobileTargets);net7.0-android;net7.0-ios</MobileTargets>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(OrtPackageId)' == 'Microsoft.ML.OnnxRuntime.Training' AND

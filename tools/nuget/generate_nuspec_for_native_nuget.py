@@ -246,8 +246,8 @@ def generate_dependencies(xml_text, package_name, version):
             xml_text.append('<group targetFramework="net7.0-android31.0">')
             xml_text.append('<dependency id="Microsoft.ML.OnnxRuntime.Managed"' + ' version="' + version + '"/>')
             xml_text.append("</group>")
-            # Support net6.0-ios
-            xml_text.append('<group targetFramework="net6.0-ios15.4">')
+            # Support net7.0-ios
+            xml_text.append('<group targetFramework="net7.0-ios15.4">')
             xml_text.append('<dependency id="Microsoft.ML.OnnxRuntime.Managed"' + ' version="' + version + '"/>')
             xml_text.append("</group>")
             # Support net6.0-macos
@@ -953,7 +953,7 @@ def generate_files(line_list, args):
             )
 
             net6_ios_source_targets = os.path.join(
-                args.sources_path, "csharp", "src", "Microsoft.ML.OnnxRuntime", "targets", "net6.0-ios", "targets.xml"
+                args.sources_path, "csharp", "src", "Microsoft.ML.OnnxRuntime", "targets", "net7.0-ios", "targets.xml"
             )
             net6_ios_target_targets = os.path.join(
                 args.sources_path,
@@ -961,7 +961,7 @@ def generate_files(line_list, args):
                 "src",
                 "Microsoft.ML.OnnxRuntime",
                 "targets",
-                "net6.0-ios",
+                "net7.0-ios",
                 args.package_name + ".targets",
             )
 
@@ -1001,9 +1001,9 @@ def generate_files(line_list, args):
                 "<file src=" + '"' + net6_android_target_targets + '" target="buildTransitive\\net7.0-android31.0" />'
             )
 
-            files_list.append("<file src=" + '"' + net6_ios_target_targets + '" target="build\\net6.0-ios15.4" />')
+            files_list.append("<file src=" + '"' + net6_ios_target_targets + '" target="build\\net7.0-ios15.4" />')
             files_list.append(
-                "<file src=" + '"' + net6_ios_target_targets + '" target="buildTransitive\\net6.0-ios15.4" />'
+                "<file src=" + '"' + net6_ios_target_targets + '" target="buildTransitive\\net7.0-ios15.4" />'
             )
 
             files_list.append("<file src=" + '"' + net6_macos_target_targets + '" target="build\\net6.0-macos12.3" />')

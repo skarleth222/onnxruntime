@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<!-- note net6.0-maccatalyst is not supported currently. requires a new native build to be added. -->
-		<TargetFrameworks>net7.0-android;net6.0-ios</TargetFrameworks>
+		<TargetFrameworks>net7.0-android;net7.0-ios</TargetFrameworks>
 		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net6.0-windows10.0.19041.0</TargetFrameworks>
 		<OutputType>Exe</OutputType>
 		<RootNamespace>Microsoft.ML.OnnxRuntime.InferenceSample.Maui</RootNamespace>
