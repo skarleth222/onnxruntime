@@ -422,8 +422,7 @@ stages:
       inputs:
         targetType: 'inline'
         script: |
-          dotnet workload restore
-          dotnet workload install android ios
+          dotnet workload install android ios wasm-tools
         workingDirectory: '$(Build.SourcesDirectory)\csharp'
 
     - task: MSBuild@1
