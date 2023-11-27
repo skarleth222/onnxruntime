@@ -424,7 +424,8 @@ stages:
         script: |
           dotnet --version
           dotnet --list-sdks
-          dotnet workload install android ios maui wasm-tools-net6
+          dotnet workload install android ios maui-ios maui-android wasm-tools-net6
+          dotnet workload list
         workingDirectory: '$(Build.SourcesDirectory)\csharp'
 
     - task: MSBuild@1
