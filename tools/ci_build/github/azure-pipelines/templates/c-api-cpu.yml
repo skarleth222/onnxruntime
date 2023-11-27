@@ -422,7 +422,9 @@ stages:
       inputs:
         targetType: 'inline'
         script: |
-          dotnet workload install android ios wasm-tools-net6
+          dotnet --version
+          dotnet --list-sdks
+          dotnet workload install android ios maui wasm-tools-net6
         workingDirectory: '$(Build.SourcesDirectory)\csharp'
 
     - task: MSBuild@1
