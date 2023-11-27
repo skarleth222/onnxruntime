@@ -242,8 +242,8 @@ def generate_dependencies(xml_text, package_name, version):
             xml_text.append('<group targetFramework="xamarinios10">')
             xml_text.append('<dependency id="Microsoft.ML.OnnxRuntime.Managed"' + ' version="' + version + '"/>')
             xml_text.append("</group>")
-            # Support net6.0-android
-            xml_text.append('<group targetFramework="net6.0-android31.0">')
+            # Support net7.0-android
+            xml_text.append('<group targetFramework="net7.0-android31.0">')
             xml_text.append('<dependency id="Microsoft.ML.OnnxRuntime.Managed"' + ' version="' + version + '"/>')
             xml_text.append("</group>")
             # Support net6.0-ios
@@ -939,7 +939,7 @@ def generate_files(line_list, args):
                 "src",
                 "Microsoft.ML.OnnxRuntime",
                 "targets",
-                "net6.0-android",
+                "net7.0-android",
                 "targets.xml",
             )
             net6_android_target_targets = os.path.join(
@@ -948,7 +948,7 @@ def generate_files(line_list, args):
                 "src",
                 "Microsoft.ML.OnnxRuntime",
                 "targets",
-                "net6.0-android",
+                "net7.0-android",
                 args.package_name + ".targets",
             )
 
@@ -995,10 +995,10 @@ def generate_files(line_list, args):
             )
 
             files_list.append(
-                "<file src=" + '"' + net6_android_target_targets + '" target="build\\net6.0-android31.0" />'
+                "<file src=" + '"' + net6_android_target_targets + '" target="build\\net7.0-android31.0" />'
             )
             files_list.append(
-                "<file src=" + '"' + net6_android_target_targets + '" target="buildTransitive\\net6.0-android31.0" />'
+                "<file src=" + '"' + net6_android_target_targets + '" target="buildTransitive\\net7.0-android31.0" />'
             )
 
             files_list.append("<file src=" + '"' + net6_ios_target_targets + '" target="build\\net6.0-ios15.4" />')
@@ -1038,7 +1038,7 @@ def generate_files(line_list, args):
                 "src",
                 "Microsoft.ML.OnnxRuntime",
                 "targets",
-                "net6.0-android",
+                "net7.0-android",
                 "targets.xml",
             )
             net6_android_target_targets = os.path.join(
@@ -1047,7 +1047,7 @@ def generate_files(line_list, args):
                 "src",
                 "Microsoft.ML.OnnxRuntime",
                 "targets",
-                "net6.0-android",
+                "net7.0-android",
                 args.package_name + ".targets",
             )
 
@@ -1060,10 +1060,10 @@ def generate_files(line_list, args):
             )
 
             files_list.append(
-                "<file src=" + '"' + net6_android_target_targets + '" target="build\\net6.0-android31.0" />'
+                "<file src=" + '"' + net6_android_target_targets + '" target="build\\net7.0-android31.0" />'
             )
             files_list.append(
-                "<file src=" + '"' + net6_android_target_targets + '" target="buildTransitive\\net6.0-android31.0" />'
+                "<file src=" + '"' + net6_android_target_targets + '" target="buildTransitive\\net7.0-android31.0" />'
             )
 
     # README
