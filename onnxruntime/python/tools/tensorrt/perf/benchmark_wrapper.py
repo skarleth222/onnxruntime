@@ -158,8 +158,8 @@ def main():
             # Store frequency data for this model and EP
             cpu_freq_data[f"{model} {ep}"] = frequency_data
             freq_mean = sum(frequency_data) / len(frequency_data)
-            freq_var = sum(pow(x - mean, 2) for x in frequency_data) / len(frequency_data)
-            freq_std = math.sqrt(var)
+            freq_var = sum(pow(x - freq_mean, 2) for x in frequency_data) / len(frequency_data)
+            freq_std = math.sqrt(freq_var)
             logger.info(f"cpu was running for {len(frequency_data)} sec on average {freq_mean} MHz with STD of {freq_std}")
             logger.info("Completed subprocess %s with cpu freq monitor", " ".join(p.args))  # noqa: F405
 
