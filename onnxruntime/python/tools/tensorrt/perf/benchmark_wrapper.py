@@ -6,6 +6,10 @@ import logging  # noqa: F401
 import os
 import pprint
 import re
+import subprocess
+import threading
+import time
+import csv
 
 import coloredlogs  # noqa: F401
 from benchmark import *  # noqa: F403
@@ -41,7 +45,14 @@ def resolve_trtexec_path(workspace):
 def dict_to_args(dct):
     return ",".join([f"{k}={v}" for k, v in dct.items()])
 
-
+def record_cpu_frequency(model, ep, frequency_data, stop_event, interval=1):
+    """Record CPU frequency at regular intervals."""
+    while not stop_event.is_set():
+        result = subprocess.run("lscpu | grep MHz", capture_output=True, text=True, shell=True)
+        frequency = result.stdout.strip().split()[-1]
+        frequency_data.append(frequency)
+        time.sleep(interval)
+            
 def main():
     args = parse_arguments()  # noqa: F405
     setup_logger(False)  # noqa: F405
@@ -59,6 +70,7 @@ def main():
     parse_models_helper(args, models)  # noqa: F405
 
     model_to_fail_ep = {}
+    cpu_freq_data = {}
 
     benchmark_fail_csv = fail_name + csv_ending  # noqa: F405
     benchmark_metrics_csv = metrics_name + csv_ending  # noqa: F405
@@ -82,6 +94,12 @@ def main():
         write_model_info_to_file([model_info], model_list_file)
 
         for ep in ep_list:
+            # Prepare to record CPU frequency
+            stop_event = threading.Event()
+            frequency_data = []
+            cpu_thread = threading.Thread(target=record_cpu_frequency, args=(model, ep, frequency_data, stop_event))
+            cpu_thread.start()
+            
             command = [
                 "python3",
                 "benchmark.py",
@@ -131,7 +149,15 @@ def main():
                 )
 
             p = subprocess.run(command, stderr=subprocess.PIPE)  # noqa: F405
-            logger.info("Completed subprocess %s ", " ".join(p.args))  # noqa: F405
+            
+            # Stop the CPU frequency recording thread
+            stop_event.set()
+            cpu_thread.join()
+            
+            # Store frequency data for this model and EP
+            cpu_freq_data[f"{model} {ep}"] = frequency_data
+            
+            logger.info("Completed subprocess %s with cpu freq monitor", " ".join(p.args))  # noqa: F405
             logger.info("Return code: %d", p.returncode)  # noqa: F405
 
             if p.returncode != 0:
@@ -148,6 +174,17 @@ def main():
 
         os.remove(model_list_file)
 
+    max_length = max(len(freq) for freq in cpu_freq_data.values())
+    with open(os.path.join(path, "cpu_freq.csv"), 'w', newline='') as csvfile:
+        writer = csv.writer(csvfile)
+        header = ['model', 'ep'] + [str(i) for i in range(max_length)]
+        writer.writerow(header)
+
+        for model_ep, freqs in cpu_freq_data.items():
+            model, ep = model_ep.split()
+            freqs.extend([''] * (max_length - len(freqs)))
+            writer.writerow([model, ep] + freqs)
+        
     path = os.path.join(os.getcwd(), args.perf_result_path)
     if not os.path.exists(path):
         from pathlib import Path
