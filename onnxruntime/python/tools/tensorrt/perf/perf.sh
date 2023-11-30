@@ -55,6 +55,7 @@ setup() {
     if [ $? -ne 0 ]; then
         echo "Failed to fetch GPU clock frequency"
     fi
+    lscpu
     apt update
     apt-get install -y --no-install-recommends pciutils
     pip install --upgrade pip

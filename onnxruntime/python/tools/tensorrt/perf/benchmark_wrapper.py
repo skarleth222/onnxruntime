@@ -10,6 +10,7 @@ import subprocess
 import threading
 import time
 import csv
+import math
 
 import coloredlogs  # noqa: F401
 from benchmark import *  # noqa: F403
@@ -50,7 +51,7 @@ def record_cpu_frequency(model, ep, frequency_data, stop_event, interval=1):
     while not stop_event.is_set():
         result = subprocess.run("lscpu | grep MHz", capture_output=True, text=True, shell=True)
         frequency = result.stdout.strip().split()[-1]
-        frequency_data.append(frequency)
+        frequency_data.append(float(frequency))
         time.sleep(interval)
             
 def main():
@@ -156,12 +157,16 @@ def main():
             
             # Store frequency data for this model and EP
             cpu_freq_data[f"{model} {ep}"] = frequency_data
+            freq_mean = sum(frequency_data) / len(frequency_data)
+            freq_var = sum(pow(x - mean, 2) for x in frequency_data) / len(frequency_data)
+            freq_std = math.sqrt(var)
+            logger.info(f"cpu was running for {len(frequency_data)} sec on average {freq_mean} MHz with STD of {freq_std}")
             logger.info("Completed subprocess %s with cpu freq monitor", " ".join(p.args))  # noqa: F405
 
             # Check GPU clock info 
             try:
                 nvidia_smi_output = subprocess.run(["nvidia-smi", "-i", "0", "-q", "-d", "CLOCK"], capture_output=True, text=True, check=True)
-                print(f"{model}-{ep}: NVIDIA GPU Clock Information")
+                print(f"{command}: NVIDIA GPU Clock Information")
                 print(nvidia_smi_output.stdout)
             except subprocess.CalledProcessError as e:
                 print("Error running nvidia-smi command:", e)
@@ -184,6 +189,12 @@ def main():
 
         os.remove(model_list_file)
 
+    path = os.path.join(os.getcwd(), args.perf_result_path)
+    if not os.path.exists(path):
+        from pathlib import Path
+
+        Path(path).mkdir(parents=True, exist_ok=True)
+
     max_length = max(len(freq) for freq in cpu_freq_data.values())
     with open(os.path.join(path, "cpu_freq.csv"), 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
@@ -195,12 +206,6 @@ def main():
             freqs.extend([''] * (max_length - len(freqs)))
             writer.writerow([model, ep] + freqs)
         
-    path = os.path.join(os.getcwd(), args.perf_result_path)
-    if not os.path.exists(path):
-        from pathlib import Path
-
-        Path(path).mkdir(parents=True, exist_ok=True)
-
     if validate:
         logger.info("\n=========================================")  # noqa: F405
         logger.info("=========== Models/EPs metrics ==========")  # noqa: F405
