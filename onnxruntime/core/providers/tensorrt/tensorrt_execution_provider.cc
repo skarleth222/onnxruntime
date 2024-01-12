@@ -2772,14 +2772,11 @@ Status TensorrtExecutionProvider::CreateNodeComputeInfoFromGraph(const GraphView
     }
   }
 
-  // Generate cache suffix in case user would like to customize cache prefix
-  std::string cache_suffix = "_" + GetCacheSuffix(fused_node.Name(), trt_node_name_with_precision);
-
-  // enable sparse weights
-  if (sparsity_enable_) {
-    trt_config->setFlag(nvinfer1::BuilderFlag::kSPARSE_WEIGHTS);
-    LOGS_DEFAULT(VERBOSE) << "[TensorRT EP] Sparse weights are allowed";
-  }
+    // enable sparse weights
+    if (sparsity_enable_) {
+      trt_config->setFlag(nvinfer1::BuilderFlag::kSPARSE_WEIGHTS);
+      LOGS_DEFAULT(VERBOSE) << "[TensorRT EP] Sparse weights are allowed";
+    }
 #if NV_TENSORRT_MAJOR == 8 && NV_TENSORRT_MINOR == 5
   if (build_heuristics_enable_) {
     trt_config->setFlag(nvinfer1::BuilderFlag::kENABLE_TACTIC_HEURISTIC);
