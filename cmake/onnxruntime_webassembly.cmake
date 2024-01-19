@@ -162,17 +162,6 @@ else()
     ${onnxruntime_webassembly_src}
   )
 
-  if (onnxruntime_ENABLE_WEBASSEMBLY_API_EXCEPTION_CATCHING)
-    # we catch exceptions at the api level
-    file(GLOB_RECURSE onnxruntime_webassembly_src_exc CONFIGURE_DEPENDS
-      "${ONNXRUNTIME_ROOT}/wasm/api.cc"
-      "${ONNXRUNTIME_ROOT}/core/session/onnxruntime_c_api.cc"
-    )
-    set (WASM_API_EXCEPTION_CATCHING "-s DISABLE_EXCEPTION_CATCHING=0")
-    message(STATUS "onnxruntime_ENABLE_WEBASSEMBLY_EXCEPTION_CATCHING_ON_API set")
-    set_source_files_properties(${onnxruntime_webassembly_src_exc} PROPERTIES COMPILE_FLAGS ${WASM_API_EXCEPTION_CATCHING})
-  endif()
-
   target_link_libraries(onnxruntime_webassembly PRIVATE
     nsync::nsync_cpp
     ${PROTOBUF_LIB}
@@ -226,8 +215,8 @@ else()
     "SHELL:-s VERBOSE=0"
     "SHELL:-s FILESYSTEM=0"
     "SHELL:-s INCOMING_MODULE_JS_API=[preRun,locateFile,arguments,onExit,wasmMemory,buffer,instantiateWasm,mainScriptUrlOrBlob]"
-    ${WASM_API_EXCEPTION_CATCHING}
     --no-entry
+    -fwasm-exceptions
   )
 
   if (onnxruntime_USE_JSEP)
@@ -273,9 +262,6 @@ else()
       set_property(TARGET onnxruntime_webassembly APPEND_STRING PROPERTY LINK_FLAGS " -fno-rtti -DEMSCRIPTEN_HAS_UNBOUND_TYPE_NAMES=0")
     endif()
   endif()
-
-  # Set link flag to enable exceptions support, this will override default disabling exception throwing behavior when disable exceptions.
-  target_link_options(onnxruntime_webassembly PRIVATE "SHELL:-s DISABLE_EXCEPTION_THROWING=0")
 
   if (onnxruntime_ENABLE_WEBASSEMBLY_PROFILING)
     target_link_options(onnxruntime_webassembly PRIVATE --profiling --profiling-funcs)

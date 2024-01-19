@@ -10,6 +10,8 @@ rem   config      Build configuration, "d" or "r"
 rem   threaded    Build with threading support, "st" or "mt"
 rem   clean       Perform a clean build, "clean" or empty
 
+rem build --build_wasm --enable_wasm_simd --config Release --use_extensions --cmake_extra_defines onnxruntime_WEBASSEMBLY_DEFAULT_EXTENSION_FLAGS=ON
+
 setlocal enabledelayedexpansion
 
 set ROOT=%~dp0..\

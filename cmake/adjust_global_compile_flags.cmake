@@ -29,6 +29,12 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Emscripten")
     string(APPEND CMAKE_CXX_FLAGS " -flto")
   endif()
 
+  if (NOT onnxruntime_DISABLE_EXCEPTIONS)
+    # use webassembly exception handling
+    string(APPEND CMAKE_C_FLAGS " -fwasm-exceptions")
+    string(APPEND CMAKE_CXX_FLAGS " -fwasm-exceptions")
+  endif()
+
   if (onnxruntime_ENABLE_WEBASSEMBLY_DEBUG_INFO)
     # "-g3" generates DWARF format debug info.
     # NOTE: With debug info enabled, web assembly artifacts will be very huge (>1GB). So we offer an option to build without debug info.
@@ -40,11 +46,6 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Emscripten")
   if (onnxruntime_ENABLE_WEBASSEMBLY_SIMD)
     string(APPEND CMAKE_C_FLAGS " -msimd128")
     string(APPEND CMAKE_CXX_FLAGS " -msimd128")
-  endif()
-
-  if (onnxruntime_ENABLE_WEBASSEMBLY_EXCEPTION_CATCHING)
-    string(APPEND CMAKE_C_FLAGS " -s DISABLE_EXCEPTION_CATCHING=0")
-    string(APPEND CMAKE_CXX_FLAGS " -s DISABLE_EXCEPTION_CATCHING=0")
   endif()
 
   # Build WebAssembly with multi-threads support.

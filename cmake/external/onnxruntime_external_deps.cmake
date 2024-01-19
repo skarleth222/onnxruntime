@@ -44,10 +44,16 @@ if (onnxruntime_BUILD_UNIT_TESTS)
     set(GTEST_HAS_ABSL ON CACHE BOOL "" FORCE)
   endif()
   # gtest and gmock
+  if(Patch_FOUND)
+    set(ONNXRUNTIME_GTEST_PATCH_COMMAND ${Patch_EXECUTABLE} --binary --ignore-whitespace -p1 < ${PROJECT_SOURCE_DIR}/patches/googletest/googletest.patch)
+  else()
+    set(ONNXRUNTIME_GTEST_PATCH_COMMAND "")
+  endif()
   FetchContent_Declare(
     googletest
     URL ${DEP_URL_googletest}
     URL_HASH SHA1=${DEP_SHA1_googletest}
+    PATCH_COMMAND ${ONNXRUNTIME_GTEST_PATCH_COMMAND}
     FIND_PACKAGE_ARGS 1.14.0...<2.0.0 NAMES GTest
   )
 endif()
@@ -184,9 +190,9 @@ FetchContent_Declare(
 )
 
 set(protobuf_BUILD_TESTS OFF CACHE BOOL "Build protobuf tests" FORCE)
-#TODO: we'd better to turn the following option off. However, it will cause 
+#TODO: we'd better to turn the following option off. However, it will cause
 # ".\build.bat --config Debug --parallel --skip_submodule_sync --update" fail with an error message:
-# install(EXPORT "ONNXTargets" ...) includes target "onnx_proto" which requires target "libprotobuf-lite" that is 
+# install(EXPORT "ONNXTargets" ...) includes target "onnx_proto" which requires target "libprotobuf-lite" that is
 # not in any export set.
 #set(protobuf_INSTALL OFF CACHE BOOL "Install protobuf binaries and files" FORCE)
 set(protobuf_USE_EXTERNAL_GTEST ON CACHE BOOL "" FORCE)
@@ -562,4 +568,3 @@ endif()
 
 FILE(TO_NATIVE_PATH ${CMAKE_BINARY_DIR}  ORT_BINARY_DIR)
 FILE(TO_NATIVE_PATH ${PROJECT_SOURCE_DIR}  ORT_SOURCE_DIR)
-

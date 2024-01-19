@@ -440,18 +440,6 @@ def parse_arguments():
     parser.add_argument("--enable_wasm_simd", action="store_true", help="Enable WebAssembly SIMD")
     parser.add_argument("--enable_wasm_threads", action="store_true", help="Enable WebAssembly multi-threads support")
 
-    parser.add_argument(
-        "--disable_wasm_exception_catching", action="store_true", help="Disable exception catching in WebAssembly."
-    )
-    parser.add_argument(
-        "--enable_wasm_api_exception_catching", action="store_true", help="Catch exceptions at top level api."
-    )
-    parser.add_argument(
-        "--enable_wasm_exception_throwing_override",
-        action="store_true",
-        help="Enable exception throwing in WebAssembly, this will override default disabling exception throwing "
-        "behavior when disable exceptions.",
-    )
     parser.add_argument("--wasm_run_tests_in_browser", action="store_true", help="Run WebAssembly tests in browser")
 
     parser.add_argument(
@@ -748,13 +736,6 @@ def parse_arguments():
         args.android_sdk_path = os.path.normpath(args.android_sdk_path)
     if args.android_ndk_path:
         args.android_ndk_path = os.path.normpath(args.android_ndk_path)
-
-    if args.enable_wasm_api_exception_catching:
-        # if we catch on api level, we don't want to catch all
-        args.disable_wasm_exception_catching = True
-    if not args.disable_wasm_exception_catching or args.enable_wasm_api_exception_catching:
-        # doesn't make sense to catch if no one throws
-        args.enable_wasm_exception_throwing_override = True
 
     if args.cmake_generator is None and is_windows():
         args.cmake_generator = "Ninja" if args.build_wasm else "Visual Studio 17 2022"
@@ -1053,12 +1034,6 @@ def generate_build_tree(
         "-Donnxruntime_ENABLE_CUDA_LINE_NUMBER_INFO=" + ("ON" if args.enable_cuda_line_info else "OFF"),
         "-Donnxruntime_USE_CUDA_NHWC_OPS=" + ("ON" if args.enable_cuda_nhwc_ops else "OFF"),
         "-Donnxruntime_BUILD_WEBASSEMBLY_STATIC_LIB=" + ("ON" if args.build_wasm_static_lib else "OFF"),
-        "-Donnxruntime_ENABLE_WEBASSEMBLY_EXCEPTION_CATCHING="
-        + ("OFF" if args.disable_wasm_exception_catching else "ON"),
-        "-Donnxruntime_ENABLE_WEBASSEMBLY_API_EXCEPTION_CATCHING="
-        + ("ON" if args.enable_wasm_api_exception_catching else "OFF"),
-        "-Donnxruntime_ENABLE_WEBASSEMBLY_EXCEPTION_THROWING="
-        + ("ON" if args.enable_wasm_exception_throwing_override else "OFF"),
         "-Donnxruntime_WEBASSEMBLY_RUN_TESTS_IN_BROWSER=" + ("ON" if args.wasm_run_tests_in_browser else "OFF"),
         "-Donnxruntime_ENABLE_WEBASSEMBLY_THREADS=" + ("ON" if args.enable_wasm_threads else "OFF"),
         "-Donnxruntime_ENABLE_WEBASSEMBLY_DEBUG_INFO=" + ("ON" if args.enable_wasm_debug_info else "OFF"),
@@ -1327,12 +1302,6 @@ def generate_build_tree(
             emsdk_dir, "upstream", "emscripten", "cmake", "Modules", "Platform", "Emscripten.cmake"
         )
         cmake_args += ["-DCMAKE_TOOLCHAIN_FILE=" + emscripten_cmake_toolchain_file]
-        if args.disable_wasm_exception_catching:
-            # WebAssembly unittest requires exception catching to work. If this feature is disabled, we do not build
-            # unit test.
-            cmake_args += [
-                "-Donnxruntime_BUILD_UNIT_TESTS=OFF",
-            ]
 
         # add default emscripten settings
         emscripten_settings = normalize_arg_list(args.emscripten_settings)
@@ -2515,11 +2484,6 @@ def main():
         args.build_wasm = True
 
     if args.build_wasm:
-        if not args.disable_wasm_exception_catching and args.disable_exceptions:
-            # When '--disable_exceptions' is set, we set '--disable_wasm_exception_catching' as well
-            args.disable_wasm_exception_catching = True
-        if args.test and args.disable_wasm_exception_catching and not args.minimal_build:
-            raise BuildError("WebAssembly tests need exception catching enabled to run if it's not minimal build")
         if args.test and args.enable_wasm_debug_info:
             # With flag --enable_wasm_debug_info, onnxruntime_test_all.wasm will be very huge (>1GB). This will fail
             # Node.js when trying to load the .wasm file.
