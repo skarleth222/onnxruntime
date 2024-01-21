@@ -113,7 +113,7 @@ void QNNExecutionProvider::ParseHtpGraphFinalizationOptimizationMode(const std::
 
 QNNExecutionProvider::QNNExecutionProvider(const ProviderOptions& provider_options_map,
                                            const SessionOptions* session_options)
-    : IExecutionProvider{onnxruntime::kQnnExecutionProvider, true} {
+    : IExecutionProvider{onnxruntime::kQnnExecutionProvider} {
   if (session_options) {
     disable_cpu_ep_fallback_ = session_options->config_options.GetConfigOrDefault(
                                    kOrtSessionOptionsDisableCPUEPFallback, "0") == "1";
@@ -420,7 +420,7 @@ QNNExecutionProvider::GetCapability(const onnxruntime::GraphViewer& graph_viewer
 
   const auto gen_metadef_name = [&]() {
     uint64_t model_hash;
-    int metadef_id = GenerateMetaDefId(graph_viewer, model_hash);
+    int metadef_id = metadef_id_generator_.GenerateId(graph_viewer, model_hash);
     return MakeString(QNN, "_", model_hash, "_", metadef_id);
   };
 
