@@ -6,7 +6,7 @@
 #include "test_utils.h"
 #include "test/test_environment.h"
 #include "test/util/include/asserts.h"
-#include "core/framework/model_metadef_id_generator.h"
+#include "core/session/model_metadef_id_generator.h"
 
 #include "gtest/gtest.h"
 

@@ -8,7 +8,7 @@
 #include <memory>
 #include <memory.h>
 
-#include "core/framework/model_metadef_id_generator.h"
+#include "core/session/model_metadef_id_generator.h"
 #include "core/providers/dnnl/dnnl_execution_provider_info.h"
 #include "core/providers/dnnl/dnnl_threadpool.h"
 #include "core/providers/dnnl/dnnl_op_manager.h"

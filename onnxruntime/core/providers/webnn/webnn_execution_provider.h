@@ -6,7 +6,7 @@
 
 #include "core/common/inlined_containers.h"
 #include "core/framework/execution_provider.h"
-#include "core/framework/model_metadef_id_generator.h"
+#include "core/session/model_metadef_id_generator.h"
 #include "core/providers/webnn/builders/helper.h"
 
 #include <emscripten.h>

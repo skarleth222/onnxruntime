@@ -4,7 +4,7 @@
 #pragma once
 
 #include "core/framework/execution_provider.h"
-#include "core/framework/model_metadef_id_generator.h"
+#include "core/session/model_metadef_id_generator.h"
 #include "core/providers/coreml/coreml_provider_factory.h"
 
 namespace onnxruntime {
