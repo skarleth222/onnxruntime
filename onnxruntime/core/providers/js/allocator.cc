@@ -11,7 +11,9 @@ namespace js {
 
 void* JsCustomAllocator::Alloc(size_t size) {
   if (size == 0) {
-    return nullptr;
+    // return nullptr;
+    // make sure there is a buffer even for size = 0;
+    size = 1;
   }
 
   void* p = EM_ASM_PTR({ return Module.jsepAlloc($0); }, size);

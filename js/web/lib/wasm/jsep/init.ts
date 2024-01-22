@@ -169,7 +169,9 @@ export const init = async(module: OrtWasmModule, env: Env, gpuAdapter: GPUAdapte
           LOG_DEBUG('verbose', () => `[WebGPU] jsepCopyGpuToGpu: src=${src}, dst=${dst}, size=${size}`);
           backend.memcpy(src, dst);
         } else {
-          LOG_DEBUG('verbose', () => `[WebGPU] jsepCopyCpuToGpu: dataOffset=${src}, gpuDataId=${dst}, size=${size}`);
+          if (size == 0) {
+            LOG_DEBUG('verbose', () => `[WebGPU] jsepCopyCpuToGpu: dataOffset=${src}, gpuDataId=${dst}, size=${size}`);
+          }
           const data = module.HEAPU8.subarray(src >>> 0, (src >>> 0) + size);
           backend.upload(dst, data);
         }

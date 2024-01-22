@@ -20,12 +20,14 @@ bool DataTransfer::CanCopy(const OrtDevice& src_device, const OrtDevice& dst_dev
 
 common::Status DataTransfer::CopyTensor(const Tensor& src, Tensor& dst) const {
   size_t bytes = src.SizeInBytes();
-  if (bytes > 0) {
-    const void* src_data = src.DataRaw();
-    void* dst_data = dst.MutableDataRaw();
 
-    auto& src_device = src.Location().device;
-    auto& dst_device = dst.Location().device;
+  const void* src_data = src.DataRaw();
+  void* dst_data = dst.MutableDataRaw();
+
+  auto& src_device = src.Location().device;
+  auto& dst_device = dst.Location().device;
+
+  if (bytes > 0) {
 
     if (dst_device.Type() == OrtDevice::GPU) {
       if (src_device.Type() == OrtDevice::GPU) {
@@ -39,6 +41,9 @@ common::Status DataTransfer::CopyTensor(const Tensor& src, Tensor& dst) const {
       // copy from GPU to CPU
       jsepDownload(src_data, dst_data, bytes);
     }
+  } else {
+      // zero sized tensor - don't copy anything but call JS do handle it
+      EM_ASM({ Module.jsepCopy($0, $1, $2); }, src_data, dst_data, bytes);
   }
 
   return Status::OK();

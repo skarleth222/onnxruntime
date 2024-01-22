@@ -154,6 +154,7 @@ class GpuDataManagerImpl implements GpuDataManager {
     const srcLength = data.byteLength;
     const size = calcNormalizedBufferSize(srcLength);
 
+    console.log(`UPLOAD: ${srcLength}`);
     // get destination gpu buffer
     const gpuDataCache = this.storageCache.get(id);
     if (!gpuDataCache) {
@@ -246,6 +247,7 @@ class GpuDataManagerImpl implements GpuDataManager {
   // eslint-disable-next-line no-bitwise
   create(size: number, usage = GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST): GpuData {
     const bufferSize = calcNormalizedBufferSize(size);
+    console.log(`CREATE: ${size}`);
 
     let gpuBuffer;
     // Currently, only storage buffers are reused.
