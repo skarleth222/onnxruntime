@@ -44,8 +44,6 @@ MultiHeadAttention<T>::MultiHeadAttention(const OpKernelInfo& info)
   mask_filter_value_ = info.GetAttrOrDefault<float>("mask_filter_value", -10000.0f);
 
   scale_ = info.GetAttrOrDefault<float>("scale", 0.0f);
-  is_unidirectional_ = info.GetAttrOrDefault<int64_t>("unidirectional", 0) == 1;
-  ORT_ENFORCE(!is_unidirectional_, "Unidirectional MHA does not support CUDA kernel. Consider using Attention or GQA instead.");
 
   disable_fused_self_attention_ = sizeof(T) != 2 ||
                                   ParseEnvironmentVariableWithDefault<bool>(attention::kDisableFusedSelfAttention, false);
@@ -107,7 +105,6 @@ Status MultiHeadAttention<T>::ComputeInternal(OpKernelContext* context) const {
                                                                       num_heads_,
                                                                       mask_filter_value_,
                                                                       scale_,
-                                                                      is_unidirectional_,
                                                                       false,  // past_present_share_buffer
                                                                       false,  // dmmha_packing
                                                                       device_prop.maxThreadsPerBlock));

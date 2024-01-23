@@ -40,7 +40,6 @@ MultiHeadAttention<T>::MultiHeadAttention(const OpKernelInfo& info) : OpKernel(i
   num_heads_ = static_cast<int>(num_heads);
 
   mask_filter_value_ = info.GetAttrOrDefault<float>("mask_filter_value", -10000.0f);
-  is_unidirectional_ = info.GetAttrOrDefault<int64_t>("unidirectional", 0) == 1;
 }
 
 // Reshape Q/K/V from BxSxD to BxSxNxH
@@ -284,9 +283,8 @@ Status MultiHeadAttention<T>::Compute(OpKernelContext* context) const {
                                                                       nullptr,
                                                                       &parameters,
                                                                       num_heads_,
-                                                                      mask_filter_value_,
                                                                       scale,
-                                                                      is_unidirectional_,
+                                                                      mask_filter_value_,
                                                                       past_present_share_buffer,
                                                                       false));
 
